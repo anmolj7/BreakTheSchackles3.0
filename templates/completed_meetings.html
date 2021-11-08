@@ -1,11 +1,45 @@
 <link rel="stylesheet" href="{{url_for('static', filename='meeting.css')}}"> {% extends "base.html" %} {% block title %} Scion | Home {% endblock %} {% block content %}
 <div class="header upcoming">Completed Meetings</div>
-<div class="task">
-    <input class="task-item" name="task" type="checkbox" id="item-7">
-    <label for="item-7"><span class="label-text">Dashboard Design Implementation</span></label>
+{% if finished_meetings %} {% for meeting in finished_meetings %}
+<ul class="todoList">
+    {% for meeting in finished_meetings %}
+    <li>
+        {{meeting['class_name']}}
+        <br> {{meeting['class_time']}}
+        <span>
+            <form action="{{url_for('delete_meeting')}}" method="POST">
+                <input type="text" name="meeting_id" value="{{meeting['id']}}" hidden>
+                <button type="submit" class="icon">
+                    <i class="fas fa-trash"></i>
+                </button>
+            </form>
+            <form action="/transcribe_video" method="POST">
+                Transcribe Video
+                <input type="text" name="meeting_id" value="{{meeting['id']}}" hidden>
+                <button type="submit">
+                    <i class="fas fa-file-alt"></i>
+                </button>
+            </form>
+        </span>
+    </li>
+    {% endfor %}
+</ul>
+{% endfor %} {% else %}
+<ul class="todoList">
+    <li>
+        No Completed Meetings yet
+    </li>
+</ul>
+{% endif %} {% if video_list %}
+<div class="header upcoming">
+    <span>Transcribed Meetings <span class="pendingTasks"></span></span>
 </div>
-<div class="task">
-    <input class="task-item" name="task" type="checkbox" id="item-8">
-    <label for="item-8"><span class="label-text">Create a userflow</span></label>
-</div>
-{% endblock %}
+<ul class="todoList">
+    {% for video in video_list %}
+    <li>
+        {{video['video_name']}}<br>
+        <a href="/view_file/{{video['video_file_name']}}" target="_blank">View File</a>
+    </li>
+    {% endfor %}
+</ul>
+{% endif %}{% endblock %}
