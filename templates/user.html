@@ -1,0 +1,21 @@
+<link rel="stylesheet" href="{{url_for('static', filename='meeting.css')}}">
+<span></span> {% extends "base.html" %}
+<span></span> {% block title %} Scion | Schedule Meeting {% endblock %}
+<span></span> {% block content %}
+<div class="header">Email and Password</div>
+<div class="wrapper">
+    <form action="/add_user" method="POST">
+        <div class="inputField">
+            <input type="text" name="email" placeholder="Enter your email" {% if user %} value="{{user.email}}" {% endif %} required>
+            <br>
+        </div>
+        <div class="inputField">
+            <input type="password" name="password" placeholder="Enter your passsword" {% if user %} value="{{user.password}}" {% endif %} required>
+        </div>
+        <div class="inputField">
+            <input type="text" name="recording_link" placeholder="Enter link for recording" {% if user %} value="{{user.recording_link}}" {% endif %} required>
+            <button type="submit"><i class="fas fa-plus"></i></button>
+        </div>
+    </form>
+</div>
+{% endblock %}
