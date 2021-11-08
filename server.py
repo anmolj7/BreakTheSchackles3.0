@@ -49,8 +49,12 @@ MEETINGS = []
 
 @app.route("/")
 def home():
-    return render_template("index.html", meeting_list=get_meeting_list(), colors=['yellow', 'blue', 'red', 'green'])
+    return render_template("add_meeting.html", meeting_list=get_meeting_list(), colors=['yellow', 'blue', 'red', 'green'])
 
+
+@app.route("/completed_meetings")
+def completed_meetings():
+    return render_template("completed_meetings.html", meeting_list=get_meeting_list(), colors=['yellow', 'blue', 'red', 'green'])
 
 @app.route("/add_meeting")
 def add_meeting():
@@ -75,6 +79,15 @@ def form_add_meeting():
     return redirect(url_for('add_meeting'))
 
 
+@app.route('/delete_meeting', methods=['POST'])
+def delete_meeting():
+    class_id = request.form.get("meeting_id")
+    meeting = Meeting.query.filter_by(id=class_id).first()
+    db.session.delete(meeting)
+    db.session.commit()
+    return redirect(url_for("add_meeting"))
+
+
 if __name__ == "__main__":
     db.create_all()
-    app.run(debug=True)
+    app.run(debug=True, port=5001)
