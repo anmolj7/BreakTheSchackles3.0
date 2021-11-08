@@ -1,0 +1,93 @@
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" />
+<link rel="stylesheet" href="{{url_for('static', filename='meeting.css')}}">
+<span></span> {% extends "base.html" %}
+<span></span> {% block title %} Scion | Schedule Meeting {% endblock %}
+<span></span> {% block content %}
+<div class="header">Add a meeting</div>
+<div class="wrapper">
+    <form action="/add_meeting" method="POST">
+        <div class="inputField">
+            <input type="text" name="class_name" placeholder="Meeting Name" required>
+            <input type="datetime-local" name="class_time" placeholder="Time" required>
+            <br>
+        </div>
+        <div class="inputField">
+            <input type="text" name="class_link" placeholder="Meeting Link" required>
+            <button type="submit"><i class="fas fa-plus"></i></button>
+            <!-- <input type="submit" value=""> -->
+            <!-- <button type="submit" formaction="#"><i class="fas fa-plus"></i></button> -->
+        </div>
+    </form>
+    {% if meeting_list %}
+    <div class="footer">
+        <span>Pending Meetings <span class="pendingTasks"></span></span>
+    </div>
+    <br>
+    <ul class="todoList">
+        {% for meeting in meeting_list %}
+        <li>
+            {% if meeting['started'] %} Currently going on: {% endif %} {{meeting['class_name']}}
+            <br> {{meeting['class_time']}}
+            <span>
+                <form action="{{url_for('delete_meeting')}}" method="POST">
+                    <input type="text" name="meeting_id" value="{{meeting['id']}}" hidden>
+                    <button type="submit" class="icon">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </form>
+            </span>
+        </li>
+        {% endfor %}
+    </ul>
+    {% endif %} {% if finished_meetings %}
+    <div class="footer">
+        <span>Completed Meetings <span class="pendingTasks"></span></span>
+    </div>
+    <br>
+    <ul class="todoList">
+        {% for meeting in finished_meetings %}
+        <li>
+            {{meeting['class_name']}}
+            <br> {{meeting['class_time']}}
+            <span>
+                <form action="{{url_for('delete_meeting')}}" method="POST">
+                    <input type="text" name="meeting_id" value="{{meeting['id']}}" hidden>
+                    <button type="submit" class="icon">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </form>
+                <form action="/transcribe_video" method="POST">
+                    Transcribe Video
+                    <input type="text" name="meeting_id" value="{{meeting['id']}}" hidden>
+                    <button type="submit">
+                        <i class="fas fa-file-alt"></i>
+                    </button>
+                </form>
+            </span>
+        </li>
+        {% endfor %}
+    </ul>
+    {% endif %} {% if PROCESSING %}
+    <h4>Your latest video is currently processing, please come back after some time, when it's done</h4>
+    {% else %}
+    <!-- <h2>Transcribe a new video</h2>
+    <form action="/transcribe_video" method="POST" enctype="multipart/form-data">
+        <input type="text" name="name" required/>
+        <input type="file" name="file" accept=".mp4" />
+        <input type="submit" value="Upload">
+    </form> -->
+    {% endif %} {% if video_list %}
+    <div class="footer">
+        <span>Transcribed Meetings <span class="pendingTasks"></span></span>
+    </div>
+    <ul class="todoList">
+        {% for video in video_list %}
+        <li>
+            {{video['video_name']}}<br>
+            <a href="/view_file/{{video['video_file_name']}}" target="_blank">View File</a>
+        </li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+</div>
+{% endblock %}
